@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.lanjian.bluetoothapplication.MainActivity">
+
+   <Button
+       android:id="@+id/openBluetooth_btn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="打开蓝牙"/>
+   <Button
+       android:id="@+id/searchDevice_btn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="搜索设备"/>
+   <TextView
+       android:id="@+id/connectState_tv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="连接状态"/>
+   <Button
+       android:id="@+id/sendMessage_btn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="发送消息"/>
+   <EditText
+       android:id="@+id/sendMessage_et"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="发送的消息"/>
+   <TextView
+       android:id="@+id/sendMessage_tv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="发送消息"/>
+   <ListView
+       android:id="@+id/device_lv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       />
+
+</LinearLayout>
