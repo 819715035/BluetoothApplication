@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.lanjian.bluetoothapplication.adapter.BlueToothDeviceListAdapter;
 import com.lanjian.bluetoothapplication.service.BluetoothService;
 import com.lanjian.bluetoothapplication.service.BluetoothServiceListener;
+import com.lanjian.bluetoothapplication.utils.WIFIConfingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,8 +113,17 @@ public class MainActivity extends AppCompatActivity {
         if (mBluetoothService == null) {
             mBluetoothService = new BluetoothService();
         }
+        WifiConfiguration configuration = WIFIConfingUtils.configWifiInfo(this, "360免费WiFi-66", "88888888", 2);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        int netId = configuration.networkId;
+        if (netId == -1) {
+            netId = wifiManager.addNetwork(configuration);
+        }
+        wifiManager.enableNetwork(netId, true);
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @OnClick({R.id.openBluetooth_btn, R.id.searchDevice_btn, R.id.sendMessage_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {

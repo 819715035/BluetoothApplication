@@ -90,6 +90,7 @@ public class BluetoothService {
         private BluetoothSocket mmSocket;
         private InputStream mmInStream;
         private List<Byte> queueBuffer = new ArrayList<>();
+        private StringBuffer sb = new StringBuffer();
         //构造方法
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -112,12 +113,17 @@ public class BluetoothService {
             while(true){
                 try {
                     queueBuffer.clear();
+                    sb.delete(0,sb.length());
                     acceptedLen = mmInStream.read(tempInputBuffer);//返回接收的长度
                     //从缓冲区中读取数据
                     for (int i = 0; i < acceptedLen; i++) {
                         queueBuffer.add(tempInputBuffer[i]);
                     }
+                    byte[] bytes = new byte[acceptedLen];
+                    System.arraycopy(tempInputBuffer,0,bytes,0,acceptedLen);
+                    sb.append(new String(bytes,"GB2312"));
                     Log.e("tag","接收到的数据："+queueBuffer.toString());
+                    Log.e("tag","接收到的数据sb："+sb.toString());
 
 
                 } catch (IOException e) {
@@ -223,10 +229,9 @@ public class BluetoothService {
      * @param msg
      */
     public void sendMsg(final String msg) {
-
-        byte[] bytes = msg.getBytes();
         if (mmOutStream != null) {
             try {
+                byte[] bytes = msg.getBytes("gb2312");
                 //发送数据
                 mmOutStream.write(bytes);
             } catch (IOException e) {
