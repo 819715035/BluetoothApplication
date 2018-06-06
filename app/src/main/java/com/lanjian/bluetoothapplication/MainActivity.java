@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         deviceLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (bluetoothAdapter.isDiscovering()) {
+               if (bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
                 }
                BluetoothDevice device = (BluetoothDevice) deviceListAdapter.getItem(position);
@@ -178,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 //避免重复添加已经绑定过的设备
                 //if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     //此处的adapter是列表的adapter，不是BluetoothAdapter
@@ -203,5 +203,4 @@ public class MainActivity extends AppCompatActivity {
             mBluetoothService.stop();
         }
     }
-
 }

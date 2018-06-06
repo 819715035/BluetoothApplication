@@ -44,7 +44,10 @@ public class BluetoothService {
             mmDevice = device;
             BluetoothSocket tmp = null;
             try {
+                //安全连接
                 tmp = device.createRfcommSocketToServiceRecord(ConfigUtil.uuid);// Get a BluetoothSocket for a connection with the given BluetoothDevice
+                //不安全连接
+                tmp = device.createInsecureRfcommSocketToServiceRecord(ConfigUtil.uuid);// Get a BluetoothSocket for a connection with the given BluetoothDevice
             }
             catch (IOException e) {}
             mmSocket = tmp;
