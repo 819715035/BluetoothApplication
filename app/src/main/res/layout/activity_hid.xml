@@ -1,0 +1,55 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MergeRootFrame" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="46dp"
+            android:layout_marginTop="27dp"
+            android:text="connect" />
+
+        <Button
+            android:id="@+id/btn_dis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/btn_connect"
+            android:layout_alignBottom="@+id/btn_connect"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:text="disconnect" />
+
+        <EditText
+            android:id="@+id/inputEt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/btn_connect"
+            android:layout_below="@+id/btn_connect"
+            android:layout_marginTop="55dp"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/inputEt"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="54dp"
+            android:text="test" />
+
+    </RelativeLayout>
+
+</FrameLayout>

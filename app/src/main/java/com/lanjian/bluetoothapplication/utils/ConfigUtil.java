@@ -1,6 +1,7 @@
 package com.lanjian.bluetoothapplication.utils;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -31,11 +32,24 @@ public class ConfigUtil {
    // public static final String SPP_UUID = "00002a00-0000-1000-8000-00805f9b34fb"; //魅族id
    // public static final String SPP_UUID = "00002a01-0000-1000-8000-00805f9b34fb"; //魅族id
    // public static final String SPP_UUID = "00002aa6-0000-1000-8000-00805f9b34fb"; //魅族id
-   // public static final String SPP_UUID = "00001800-0000-1000-8000-00805f9b34fb"; //荣耀8id
+   //public static final String HONOR_UUID = "00001800-0000-1000-8000-00805f9b34fb"; //荣耀8id
+   public static final String HONOR_UUID = "00001000-0000-1000-8000-00805F9B34FB"; //荣耀8id
    // public static final String SPP_UUID = "00002a00-0000-1000-8000-00805f9b34fb"; //荣耀8id
    // public static final String SPP_UUID = "00002a01-0000-1000-8000-00805f9b34fb"; //荣耀8id
 
     public static final UUID uuid = UUID.fromString(SPP_UUID);
+
+    /**
+     * 判断蓝牙设备是否是输入设备,这里认为 PERIPHERAL是输入设备
+     */
+    public static boolean isInputDevice(BluetoothDevice device) {
+        int deviceMajorClass = device.getBluetoothClass().getMajorDeviceClass();
+        if (deviceMajorClass == BluetoothClass.Device.Major.PERIPHERAL) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * 与设备配对 参考源码：platform/packages/apps/Settings.git

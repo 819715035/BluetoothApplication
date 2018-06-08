@@ -17,26 +17,6 @@ The following files were *not* copied into the new Gradle project; you
 should evaluate whether these are still needed in your project and if
 so manually move them:
 
-* BlueTooth\
-* BlueTooth\alarm.png
-* BlueTooth\alarm2_C.png
-* BlueTooth\alarm2_N.png
-* BlueTooth\clock.png
-* BlueTooth\clock2_C.png
-* BlueTooth\clock2_N.png
-* BlueTooth\ic_app.png
-* BlueTooth\ic_launcher.png
-* BlueTooth\light_C.png
-* BlueTooth\light_N.png
-* BlueTooth\screen_C.png
-* BlueTooth\screen_N.png
-* BlueTooth\seria_C.png
-* BlueTooth\seria_N.png
-* BlueTooth\stand_By_D.png
-* BlueTooth\stand_By_N.png
-* BlueTooth\t1.jpg
-* BlueTooth\t2.jpg
-* BlueTooth\t3.jpg
 * ic_launcher-web.png
 * proguard-project.txt
 
@@ -57,10 +37,10 @@ Moved Files:
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => bLUETOOTH\src\main\AndroidManifest.xml
-* assets\ => bLUETOOTH\src\main\assets
-* res\ => bLUETOOTH\src\main\res\
-* src\ => bLUETOOTH\src\main\java\
+* AndroidManifest.xml => nfc_demo\src\main\AndroidManifest.xml
+* assets\ => nfc_demo\src\main\assets
+* res\ => nfc_demo\src\main\res\
+* src\ => nfc_demo\src\main\java\
 
 Missing Android Support Repository:
 -----------------------------------

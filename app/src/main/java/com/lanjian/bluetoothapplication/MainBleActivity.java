@@ -27,8 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lanjian.bluetoothapplication.adapter.BlueToothDeviceListAdapter;
-import com.lanjian.bluetoothapplication.utils.ConfigUtil;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -82,118 +83,138 @@ public class MainBleActivity extends AppCompatActivity {
                 //连接设备
                 // connectDevice(device);
 
-                for (int i = 0;i<device.getUuids().length;i++){
+               /* for (int i = 0;i<device.getUuids().length;i++){
                     Log.e("tag","device.getUuids()["+i+"]="+device.getUuids()[i]);
-                }
-                mGatt = device.connectGatt(MainBleActivity.this, false, new BluetoothGattCallback() {
-                    @Override
-                    public void onPhyUpdate(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
-                        super.onPhyUpdate(gatt, txPhy, rxPhy, status);
+                }*/
+                if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    //利用反射方法调用BluetoothDevice.createBond(BluetoothDevice remoteDevice);
+                    Method createBondMethod = null;
+                    try {
+                        createBondMethod = BluetoothDevice.class
+                                .getMethod("createBond");
+                        Log.d("BlueToothTestActivity", "开始配对");
+                        createBondMethod.invoke(device);
+                        return;
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public void onPhyRead(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
-                        super.onPhyRead(gatt, txPhy, rxPhy, status);
-                    }
 
-                    @Override
-                    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                        super.onConnectionStateChange(gatt, status, newState);
-                        Log.e("onConnectionStateChange","status="+status+"newState="+newState+"="+BluetoothProfile.STATE_CONNECTED);
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
+                }else if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    mGatt = device.connectGatt(MainBleActivity.this, false, new BluetoothGattCallback() {
+                        @Override
+                        public void onPhyUpdate(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
+                            super.onPhyUpdate(gatt, txPhy, rxPhy, status);
+                        }
 
-                            if (newState == BluetoothGatt.STATE_CONNECTED) {
-                                mGatt.discoverServices();
-                            } else if  (newState == BluetoothGatt.STATE_DISCONNECTED) {
+                        @Override
+                        public void onPhyRead(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
+                            super.onPhyRead(gatt, txPhy, rxPhy, status);
+                        }
+
+                        @Override
+                        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                            super.onConnectionStateChange(gatt, status, newState);
+                            Log.e("onConnectionStateChange", "status=" + status + "newState=" + newState + "=" + BluetoothProfile.STATE_CONNECTED);
+                            if (status == BluetoothGatt.GATT_SUCCESS) {
+
+                                if (newState == BluetoothGatt.STATE_CONNECTED) {
+                                    mGatt.discoverServices();
+                                } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
+                                    close(); // 防止出现status 133
+                                    Log.i("tag", "Disconnected from GATT server.");
+                                }
+
+                            } else {
+                                Log.d("tag", "onConnectionStateChange received: " + status);
                                 close(); // 防止出现status 133
-                                Log.i("tag", "Disconnected from GATT server.");
+
                             }
-
-                        } else {
-                            Log.d("tag", "onConnectionStateChange received: "  + status);
-                            close(); // 防止出现status 133
-
                         }
-                    }
 
-                    @Override
-                    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-                        super.onServicesDiscovered(gatt, status);
-                        Log.e("onServicesDiscovered","status="+status+"==="+BluetoothGatt.GATT_SUCCESS);
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            //寻找到服务
-                            //寻找服务之后，我们就可以和设备进行通信，比如下发配置值，获取设备电量什么的
-                            mGatt.getServices();
-                            for (int i = 0;i<mGatt.getServices().size();i++){
-                                List<BluetoothGattCharacteristic> services = mGatt.getServices().get(i).getCharacteristics();
-                                for (int j = 0;j<services.size();j++){
-                                    Log.e("tag","services"+j+"="+services.get(j).getUuid());
+                        @Override
+                        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                            super.onServicesDiscovered(gatt, status);
+                            Log.e("onServicesDiscovered", "status=" + status + "===" + BluetoothGatt.GATT_SUCCESS);
+                            if (status == BluetoothGatt.GATT_SUCCESS) {
+                                //寻找到服务
+                                //寻找服务之后，我们就可以和设备进行通信，比如下发配置值，获取设备电量什么的
+                                mGatt.getServices();
+                                for (int i = 0; i < mGatt.getServices().size(); i++) {
+                                    List<BluetoothGattCharacteristic> services = mGatt.getServices().get(i).getCharacteristics();
+                                    for (int j = 0; j < services.size(); j++) {
+                                        Log.e("tag", "services" + j + "=" + services.get(j).getUuid());
+                                    }
+                                    for (int j = 0; j < services.get(j).getDescriptors().size(); j++) {
+                                        Log.e("tag", "getDescriptors" + j + "=" + services.get(j).getDescriptors().get(i).getUuid());
+                                    }
+                                    Log.e("tag", "mGatt.getServices()" + i + "=" + mGatt.getServices().get(i).getIncludedServices());
                                 }
-                                for (int j = 0;j<services.get(j).getDescriptors().size();j++){
-                                    Log.e("tag","getDescriptors"+j+"="+services.get(j).getDescriptors().get(i).getUuid());
-                                }
-                                Log.e("tag","mGatt.getServices()"+i+"="+mGatt.getServices().get(i).getIncludedServices());
+                                readBatrery();  //读取电量操作
+                                sendSetting(); //下发配置值
+
                             }
-                            readBatrery();  //读取电量操作
-                            sendSetting(); //下发配置值
-
                         }
-                    }
 
-                    @Override
-                    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                        super.onCharacteristicRead(gatt, characteristic, status);
-                        Log.e("tag","onCharacteristicRead=="+gatt.getDevice().getAddress());
-                        if (characteristic.getUuid().toString()
-                                .equals("00002a01-0000-1000-8000-00805f9b34fb")) {// 获取到电量
-                            int battery = characteristic.getValue()[0];
-                            Log.e("tag","battery=="+battery);
+                        @Override
+                        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                            super.onCharacteristicRead(gatt, characteristic, status);
+                            Log.e("tag", "onCharacteristicRead==" + gatt.getDevice().getAddress());
+                            if (characteristic.getUuid().toString()
+                                    .equals("00002a01-0000-1000-8000-00805f9b34fb")) {// 获取到电量
+                                int battery = characteristic.getValue()[0];
+                                Log.e("tag", "battery==" + battery);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                        super.onCharacteristicWrite(gatt, characteristic, status);
-                        Log.e("tag","onCharacteristicWrite==");
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            //write成功（发送值成功），可以根据 characteristic.getValue()来判断是哪个值发送成功了，
-                            // 比如 连接上设备之后你有一大串命令需要下发，你调用多次写命令，
-                            // 这样你需要判断是不是所有命令都成功了，因为android不太稳定，有必要来check命令是否成功，
-                            // 否则你会发现你明明调用 写命令，但是设备那边不响应
-                            Log.e("tag","onCharacteristicWrite");
+                        @Override
+                        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                            super.onCharacteristicWrite(gatt, characteristic, status);
+                            Log.e("tag", "onCharacteristicWrite==");
+                            if (status == BluetoothGatt.GATT_SUCCESS) {
+                                //write成功（发送值成功），可以根据 characteristic.getValue()来判断是哪个值发送成功了，
+                                // 比如 连接上设备之后你有一大串命令需要下发，你调用多次写命令，
+                                // 这样你需要判断是不是所有命令都成功了，因为android不太稳定，有必要来check命令是否成功，
+                                // 否则你会发现你明明调用 写命令，但是设备那边不响应
+                                Log.e("tag", "onCharacteristicWrite");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                        super.onCharacteristicChanged(gatt, characteristic);
-                    }
+                        @Override
+                        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                            super.onCharacteristicChanged(gatt, characteristic);
+                        }
 
-                    @Override
-                    public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-                        super.onDescriptorRead(gatt, descriptor, status);
-                    }
+                        @Override
+                        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+                            super.onDescriptorRead(gatt, descriptor, status);
+                        }
 
-                    @Override
-                    public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-                        super.onDescriptorWrite(gatt, descriptor, status);
-                    }
+                        @Override
+                        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+                            super.onDescriptorWrite(gatt, descriptor, status);
+                        }
 
-                    @Override
-                    public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-                        super.onReliableWriteCompleted(gatt, status);
-                    }
+                        @Override
+                        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
+                            super.onReliableWriteCompleted(gatt, status);
+                        }
 
-                    @Override
-                    public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-                        super.onReadRemoteRssi(gatt, rssi, status);
-                    }
+                        @Override
+                        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+                            super.onReadRemoteRssi(gatt, rssi, status);
+                        }
 
-                    @Override
-                    public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
-                        super.onMtuChanged(gatt, mtu, status);
-                    }
-                });
+                        @Override
+                        public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+                            super.onMtuChanged(gatt, mtu, status);
+                        }
+                    });
+                }
             }
         });
 

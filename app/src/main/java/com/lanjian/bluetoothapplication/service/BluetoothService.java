@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BluetoothService {
     private OutputStream mmOutStream;
@@ -45,9 +46,9 @@ public class BluetoothService {
             BluetoothSocket tmp = null;
             try {
                 //安全连接
-                tmp = device.createRfcommSocketToServiceRecord(ConfigUtil.uuid);// Get a BluetoothSocket for a connection with the given BluetoothDevice
+               // tmp = device.createRfcommSocketToServiceRecord(ConfigUtil.uuid);// Get a BluetoothSocket for a connection with the given BluetoothDevice
                 //不安全连接
-                tmp = device.createInsecureRfcommSocketToServiceRecord(ConfigUtil.uuid);// Get a BluetoothSocket for a connection with the given BluetoothDevice
+                tmp = device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(ConfigUtil.HONOR_UUID));// Get a BluetoothSocket for a connection with the given BluetoothDevice
             }
             catch (IOException e) {}
             mmSocket = tmp;
@@ -60,9 +61,9 @@ public class BluetoothService {
             mAdapter.cancelDiscovery();// Always cancel discovery because it will slow down a connection
 
             try {
-                mmSocket.connect();// This is a blocking call and will only return on a successful connection or an exception
-            }
-            catch (IOException e) {
+                mmSocket.connect();
+                // This is a blocking call and will only return on a successful connection or an exception
+            } catch (IOException e) {
                 if (bluetoothServiceListener!=null){
                     bluetoothServiceListener.connectionFailed();
                 }
@@ -187,7 +188,7 @@ public class BluetoothService {
             // this.index=index;
             // Create a new listening server socket
             try {
-                tmp = mAdapter.listenUsingRfcommWithServiceRecord("BluetoothData", ConfigUtil.uuid);
+                tmp = mAdapter.listenUsingRfcommWithServiceRecord("BluetoothData", UUID.fromString(ConfigUtil.HONOR_UUID));
             }
             catch (IOException e) {}
             mmServerSocket = tmp;
